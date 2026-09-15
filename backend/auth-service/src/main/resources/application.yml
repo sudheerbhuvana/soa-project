@@ -1,0 +1,33 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: auth-service
+  datasource:
+    url: jdbc:postgresql://ep-flat-breeze-b5j4ye6o-pooler.c-7.us-east-2.aws.neon.tech:5432/soa-postgres?sslmode=require&channel_binding=require
+    username: soa-postgres_owner
+    password: npg_Rc6hqlZ3Dawv
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 5
+      connection-timeout: 10000
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        default_schema: auth
+        format_sql: false
+    show-sql: false
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+app:
+  jwt:
+    secret: harborflow-super-secret-key-for-jwt-signing-2026-port-ops
+    expiration: 86400000
