@@ -16,34 +16,34 @@ spring:
           predicates:
             - Path=/api/auth/**
           filters:
-            - StripPrefix=2
+            - StripPrefix=1
         - id: carrier-service
           uri: lb://carrier-service
           predicates:
             - Path=/api/carriers/**
           filters:
-            - StripPrefix=2
+            - StripPrefix=1
             - JwtAuthenticationFilter
         - id: container-service
           uri: lb://container-service
           predicates:
             - Path=/api/containers/**
           filters:
-            - StripPrefix=2
+            - StripPrefix=1
             - JwtAuthenticationFilter
         - id: yard-service
           uri: lb://yard-service
           predicates:
             - Path=/api/yard/**
           filters:
-            - StripPrefix=2
+            - StripPrefix=1
             - JwtAuthenticationFilter
         - id: gate-service
           uri: lb://gate-service
           predicates:
             - Path=/api/gate/**
           filters:
-            - StripPrefix=2
+            - StripPrefix=1
             - JwtAuthenticationFilter
       loadbalancer:
         retry:
