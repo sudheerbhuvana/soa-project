@@ -1,20 +1,24 @@
-// Smart API client: tries the real Spring Cloud Gateway (NEXT_PUBLIC_API_BASE),
-// falls back to local Next.js mock routes if the gateway is unreachable.
+// API client: hits the Spring Cloud Gateway (NEXT_PUBLIC_API_BASE) only.
+// No mock fallback — Neon Postgres is the single source of truth.
 
-const REMOTE = process.env.NEXT_PUBLIC_API_BASE;
-const LOCAL = "/api";
+const BASE = process.env.NEXT_PUBLIC_API_BASE ?? "http://localhost:8080";
+const PREFIX = "/api";
+
 function getToken() {
   if (typeof window === "undefined") return null;
   return localStorage.getItem("hf_token");
 }
 
-async function tryFetch(url: string, init: RequestInit, headers: Record<string, string>) {
+async function doFetch<T>(url: string, init: RequestInit, headers: Record<string, string>): Promise<T> {
   const res = await fetch(url, { ...init, headers });
-  if (!res.ok) throw new Error((await res.text()) || `Request failed: ${res.status}`);
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    throw new Error(body || `Request failed: ${res.status}`);
+  }
   const ct = res.headers.get("content-type") || "";
-  if (ct.includes("application/json")) return res.json();
-  if (res.status === 204) return null;
-  return res.text();
+  if (ct.includes("application/json")) return (await res.json()) as T;
+  if (res.status === 204) return null as T;
+  return (await res.text()) as unknown as T;
 }
 
 export async function api<T = any>(path: string, init: RequestInit = {}): Promise<T> {
@@ -24,16 +28,7 @@ export async function api<T = any>(path: string, init: RequestInit = {}): Promis
   };
   const token = getToken();
   if (token) headers["Authorization"] = `Bearer ${token}`;
-  if (REMOTE) {
-    try {
-      return (await tryFetch(`${REMOTE}${path}`, init, headers)) as T;
-    } catch (e) {
-      const msg = (e as Error).message || "";
-      const isNetwork = msg.includes("Failed to fetch") || msg.includes("ECONNREFUSED") || msg.includes("Request failed: 0");
-      if (!isNetwork) throw e;
-    }
-  }
-  return (await tryFetch(`${LOCAL}${path}`, init, headers)) as T;
+  return doFetch<T>(`${BASE}${PREFIX}${path}`, init, headers);
 }
 
 export const authApi = {
