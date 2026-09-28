@@ -1,7 +1,9 @@
 package com.harborflow.auth.service;
 
+import com.harborflow.auth.client.CarrierServiceClient;
 import com.harborflow.auth.dto.AuthRequest;
 import com.harborflow.auth.dto.AuthResponse;
+import com.harborflow.auth.dto.CarrierAuthResponse;
 import com.harborflow.auth.dto.RegisterRequest;
 import com.harborflow.auth.entity.User;
 import com.harborflow.auth.repository.UserRepository;
@@ -17,6 +19,9 @@ public class AuthService {
 
     @Autowired
     private JwtService jwtService;
+
+    @Autowired
+    private CarrierServiceClient carrierClient;
 
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
@@ -43,5 +48,18 @@ public class AuthService {
 
         String token = jwtService.generateToken(user.getEmail(), user.getRole());
         return new AuthResponse(token, user.getEmail(), user.getRole());
+    }
+
+    /**
+     * Carrier login: credentials live in carrier-service (separate DB).
+     * We verify via HTTP and issue a JWT with role=CARRIER.
+     */
+    public AuthResponse loginCarrier(String email, String password) {
+        CarrierAuthResponse carrier = carrierClient.verifyCredentials(email, password);
+        if (carrier == null) {
+            throw new RuntimeException("Invalid carrier credentials");
+        }
+        String token = jwtService.generateToken(carrier.getEmail(), "CARRIER");
+        return new AuthResponse(token, carrier.getEmail(), "CARRIER");
     }
 }

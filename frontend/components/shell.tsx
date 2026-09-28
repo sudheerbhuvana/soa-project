@@ -4,7 +4,7 @@ import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import {
   LayoutDashboard, Truck, Container as ContainerIcon, LayoutGrid,
-  ShieldCheck, Network, LogOut, Search,
+  ShieldCheck, Network, LogOut, Search, ClipboardList,
 } from "lucide-react";
 import { Badge, Button, Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui";
 import { carrierApi, containerApi, yardApi, gateApi } from "@/lib/api";
@@ -21,6 +21,7 @@ const nav: NavItem[] = [
   { href: "/dashboard",             label: "Overview",   icon: LayoutDashboard, shortcut: "G O", keywords: ["home", "metrics", "stats"] },
   { href: "/dashboard/carriers",    label: "Carriers",   icon: Truck,            shortcut: "G C", keywords: ["shipping", "lines", "maersk", "msc"] },
   { href: "/dashboard/containers",  label: "Containers", icon: ContainerIcon,   shortcut: "G N", keywords: ["boxes", "cargo"] },
+  { href: "/dashboard/jobs",        label: "Jobs",       icon: ClipboardList,   shortcut: "G J", keywords: ["assign", "work", "order"] },
   { href: "/dashboard/yard",        label: "Yard",       icon: LayoutGrid,      shortcut: "G Y", keywords: ["slots", "zone"] },
   { href: "/dashboard/gate",        label: "Gate",       icon: ShieldCheck,     shortcut: "G G", keywords: ["truck", "transactions"] },
   { href: "/dashboard/services",    label: "Services",   icon: Network,         shortcut: "G S", keywords: ["eureka", "microservices"] },
@@ -78,7 +79,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
       if (!isTyping) {
         if (gPress.current && Date.now() - gPress.current < 1500) {
           const key = e.key.toLowerCase();
-          const map: Record<string, string> = { o: "/dashboard", c: "/dashboard/carriers", n: "/dashboard/containers", y: "/dashboard/yard", g: "/dashboard/gate", s: "/dashboard/services" };
+          const map: Record<string, string> = { o: "/dashboard", c: "/dashboard/carriers", n: "/dashboard/containers", j: "/dashboard/jobs", y: "/dashboard/yard", g: "/dashboard/gate", s: "/dashboard/services" };
           if (map[key]) {
             e.preventDefault();
             router.push(map[key]);

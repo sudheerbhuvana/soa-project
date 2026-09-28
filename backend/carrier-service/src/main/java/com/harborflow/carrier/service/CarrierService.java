@@ -50,6 +50,17 @@ public class CarrierService {
         repository.deleteById(id);
     }
 
+    /**
+     * Verify carrier credentials (used by auth-service via /internal/verify).
+     * Returns CarrierDto without password, or null if invalid.
+     */
+    public CarrierDto verifyCredentials(String email, String password) {
+        return repository.findByEmail(email)
+            .filter(c -> c.getPassword() != null && c.getPassword().equals(password))
+            .map(this::toDto)
+            .orElse(null);
+    }
+
     private CarrierDto toDto(Carrier c) {
         CarrierDto d = new CarrierDto();
         BeanUtils.copyProperties(c, d);

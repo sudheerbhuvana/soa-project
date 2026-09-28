@@ -2,6 +2,7 @@ package com.harborflow.auth.controller;
 
 import com.harborflow.auth.dto.AuthRequest;
 import com.harborflow.auth.dto.AuthResponse;
+import com.harborflow.auth.dto.CarrierLoginRequest;
 import com.harborflow.auth.dto.RegisterRequest;
 import com.harborflow.auth.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,6 +35,14 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
         return ResponseEntity.ok(authService.login(request));
+    }
+
+    @Operation(summary = "Carrier sign in", description = "Verifies carrier credentials against carrier-service and issues a JWT with role=CARRIER.")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "JWT issued"),
+                   @ApiResponse(responseCode = "401", description = "Invalid carrier credentials")})
+    @PostMapping("/carrier-login")
+    public ResponseEntity<AuthResponse> carrierLogin(@RequestBody CarrierLoginRequest request) {
+        return ResponseEntity.ok(authService.loginCarrier(request.getEmail(), request.getPassword()));
     }
 
     @Operation(summary = "Health check")

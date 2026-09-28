@@ -32,8 +32,9 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
             ServerHttpRequest request = exchange.getRequest();
             String path = request.getURI().getPath();
 
-            if (path.contains("/auth/login") || path.contains("/auth/register")
-                    || path.contains("/eureka") || path.startsWith("/actuator")) {
+            if (path.contains("/auth/login") || path.contains("/auth/register") || path.contains("/auth/carrier-login")
+                    || path.contains("/eureka") || path.startsWith("/actuator")
+                    || path.contains("/carriers/internal/")) {
                 return chain.filter(exchange);
             }
 

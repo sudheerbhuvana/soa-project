@@ -20,7 +20,7 @@ spring:
         - id: carrier-service
           uri: lb://carrier-service
           predicates:
-            - Path=/api/carriers/**
+            - Path=/api/carriers/**,/api/jobs/**
           filters:
             - StripPrefix=1
             - JwtAuthenticationFilter

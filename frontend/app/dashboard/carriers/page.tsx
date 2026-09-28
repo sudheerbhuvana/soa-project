@@ -36,7 +36,7 @@ export default function CarriersPage() {
           <form onSubmit={submit} className="p-6 space-y-3">
             <div className="space-y-1.5"><Label>Company name</Label><Input required value={form.companyName} onChange={(e) => setForm({ ...form, companyName: e.target.value })} /></div>
             <div className="space-y-1.5"><Label>Email</Label><Input type="email" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></div>
-            <div className="space-y-1.5"><Label>Password</Label><Input type="text" required value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} /></div>
+            <div className="space-y-1.5"><Label>Password</Label><Input type="text" required value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} /><p className="text-[10px] text-muted-foreground font-mono mt-1">Default "pass123" — carrier uses this to sign in via the Carrier login button.</p></div>
             <div className="space-y-1.5"><Label>Vessel identifier</Label><Input required value={form.vesselIdentifier} onChange={(e) => setForm({ ...form, vesselIdentifier: e.target.value })} /></div>
           </form>
           <DialogFooter>

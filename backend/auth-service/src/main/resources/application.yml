@@ -31,3 +31,7 @@ app:
   jwt:
     secret: harborflow-super-secret-key-for-jwt-signing-2026-port-ops
     expiration: 86400000
+
+carrier:
+  service:
+    url: http://localhost:8082

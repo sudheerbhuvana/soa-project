@@ -1,6 +1,7 @@
 package com.harborflow.carrier.controller;
 
 import com.harborflow.carrier.dto.CarrierDto;
+import com.harborflow.carrier.dto.VerifyCredentialsRequest;
 import com.harborflow.carrier.service.CarrierService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -9,6 +10,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
@@ -47,5 +50,19 @@ public class CarrierController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * Internal endpoint used by auth-service to verify carrier credentials.
+     * Returns 401 if invalid, otherwise returns carrier profile (no password).
+     */
+    @Operation(summary = "Verify carrier credentials (internal)")
+    @PostMapping("/internal/verify")
+    public CarrierDto verify(@RequestBody VerifyCredentialsRequest req) {
+        CarrierDto carrier = service.verifyCredentials(req.getEmail(), req.getPassword());
+        if (carrier == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid carrier credentials");
+        }
+        return carrier;
     }
 }

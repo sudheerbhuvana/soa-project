@@ -36,6 +36,8 @@ export const authApi = {
     api("/auth/register", { method: "POST", body: JSON.stringify(data) }),
   login: (data: { email: string; password: string }) =>
     api("/auth/login", { method: "POST", body: JSON.stringify(data) }),
+  carrierLogin: (data: { email: string; password: string }) =>
+    api("/auth/carrier-login", { method: "POST", body: JSON.stringify(data) }),
 };
 
 export type Carrier = { carrierId: number; companyName: string; email: string; vesselIdentifier: string };
@@ -71,4 +73,15 @@ export const gateApi = {
   list: () => api<GateTransaction[]>("/gate/transactions"),
   create: (data: Omit<GateTransaction, "gateTransactionId" | "timestamp">) =>
     api<GateTransaction>("/gate/transactions", { method: "POST", body: JSON.stringify(data) }),
+};
+
+export type Job = { jobId: number; carrierId: number; containerId: number; truckLicense: string; status: string; assignedAt?: string; completedAt?: string };
+export const jobApi = {
+  list: () => api<Job[]>("/jobs"),
+  listByCarrier: (carrierId: number) => api<Job[]>(`/jobs/carrier/${carrierId}`),
+  create: (data: Omit<Job, "jobId" | "status" | "assignedAt" | "completedAt">) =>
+    api<Job>("/jobs", { method: "POST", body: JSON.stringify({ ...data, status: "ASSIGNED" }) }),
+  setStatus: (id: number, status: string) =>
+    api<Job>(`/jobs/${id}/status`, { method: "PATCH", body: JSON.stringify({ status }) }),
+  remove: (id: number) => api(`/jobs/${id}`, { method: "DELETE" }),
 };
